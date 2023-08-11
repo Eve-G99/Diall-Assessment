@@ -21,7 +21,7 @@ export default function MainContainer(){
     return(
         <NavigationContainer>
             <Tab.Navigator
-            initialRouteName={homepageName}
+            initialRouteName={watchpageName}
             screenOptions ={({route}) => ({
                 tabBarIcon: ({focused, color, size}) => {
                     let iconName;
