@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 //Screens
 import HomePage from './pages/HomePage';
@@ -10,10 +10,10 @@ import SearchPage from './pages/SearchPage';
 import AskPage from './pages/AskPage';
 
 //Screen Names
-const homepageName = 'Home';
-const watchpageName = 'Watch';
-const searchpageName = 'Search';
-const askpageName = 'Ask';
+const homepageName = 'Home'
+const watchpageName = 'Watch'
+const searchpageName = 'Search'
+const askpageName = 'Ask'
 
 //Create the Tab Navigator
 const Tab = createBottomTabNavigator();

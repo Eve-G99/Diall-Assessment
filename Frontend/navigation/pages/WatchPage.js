@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, StyleSheet, Button, Text, FlatList, Dimensions, TouchableOpacity} from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
-import VideoItem from './VideoItem'
+import VideoItem from './VideoItem';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,6 +35,7 @@ export default function WatchPage({ navigation }) {
   ];
 
   const renderItem = ({ item, index }) => <VideoItem item={item} index = {index} />;
+                                            // <VideoContainer>
   return (
       <View style={styles.container}>
           <FlatList

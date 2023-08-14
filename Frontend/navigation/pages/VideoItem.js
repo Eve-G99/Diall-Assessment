@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { View, StyleSheet, Button, Text, FlatList, Dimensions, TouchableOpacity} from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
+import Share from 'react-native-share';
 
 const styles = StyleSheet.create({
     container: {
@@ -51,6 +52,7 @@ export default function VideoItem({item, index}) {
                     shouldPlay
                     isLooping
                 />
+                {/* VideoInfo */ }
                 {isPaused && (
                     <View style={styles.pausedOverlay}>
                         {/* <Text> </Text>  Replace with a paused icon */}
