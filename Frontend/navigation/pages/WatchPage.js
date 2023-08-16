@@ -1,50 +1,81 @@
 import * as React from 'react';
-import { View, StyleSheet, Button, Text, FlatList, Dimensions, TouchableOpacity} from 'react-native';
-import { Video, ResizeMode } from 'expo-av';
-import VideoItem from './VideoItem';
-
-const styles = StyleSheet.create({
-  container: {
-      flex: 1,
-      justifyContent: 'center',
-      backgroundColor: '#ecf0f1',
-  },
-  video: {
-      alignSelf: 'center',
-      width: 340,
-      height: 680,
-  },
-  buttons: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-  },
-  pausedOverlay: {
-      ...StyleSheet.absoluteFill,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.6)',
-  },
-});
+import { View, StyleSheet, FlatList, Dimensions, Share, Button} from 'react-native';
+import VideoItem from './VideoItem'
 
 export default function WatchPage({ navigation }) {
-  const array = [
-      'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
-      'https://file-examples.com/storage/fe7bb0e37864d66f29c40ee/2017/04/file_example_MP4_480_1_5MG.mp4',
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
-  ];
+    const videoData = [
+        {
+            url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
+            username: '@Alex',
+            title: 'Bunny Video'
+        },
+        {
+            url: 'https://file-examples.com/storage/fe7bb0e37864d66f29c40ee/2017/04/file_example_MP4_480_1_5MG.mp4',
+            username: '@Ben',
+            title: 'Earth Video'
+        },
+        {
+            url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+            username: '@Carol',
+            title: 'Joy Rides'
+        },
+        {
+            url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+            username: 'For Scroll',
+            title: 'Sample'
+        },
+    ];
 
-  const renderItem = ({ item, index }) => <VideoItem item={item} index = {index} />;
-                                            // <VideoContainer>
+    const [activeIndex, setActiveIndex] = React.useState(0);
+
+    const viewabilityConfig = {
+        waitForInteraction: true,
+        viewAreaCoveragePercentThreshold: 50
+    };
+
+    const renderItem = ({ item, index }) => <VideoItem videoData={item} index={index} isActive={index === activeIndex} />;
+
+    const onViewableItemsChanged = React.useRef(({ viewableItems, changed }) => {
+        const currentIndex = viewableItems[0]?.index;
+
+        if (currentIndex === videoData.length-1) {
+            // When the last video is viewed, scroll back to the top
+            setActiveIndex(0);
+            setTimeout(() => {
+                flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+            }, 0);
+        } else {
+            setActiveIndex(currentIndex);
+        }
+    }).current;
+
+    const flatListRef = React.useRef(null);
+
+    const onScrollBeginDrag = (event) => {
+        var currentOffset = event.nativeEvent.contentOffset.y;
+        var direction = currentOffset > this.offset ? 'down' : 'up';
+        if(direction == 'up'){
+            console.log("scroll up")
+        }
+        // console.log(event)
+    }
+
   return (
-      <View style={styles.container}>
-          <FlatList
-              data={array}
-              renderItem={renderItem}
-              pagingEnabled
-              keyExtractor={item => item}
-              decelerationRate={'fast'}
-          />
-      </View>
+    <View style={{ flex: 1, backgroundColor: '#ecf0f1' }}>
+        <FlatList
+            ref={flatListRef}
+            data={videoData}
+            renderItem={renderItem}
+            pagingEnabled
+            keyExtractor={item => item.url}
+            decelerationRate={'fast'}
+            horizontal={false}
+            showsVerticalScrollIndicator={false}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
+            initialNumToRender={1}
+            // onScrollBeginDrag={onScrollBeginDrag}
+        />
+    </View>
   );
 }

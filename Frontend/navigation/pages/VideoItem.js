@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { View, StyleSheet, Button, Text, FlatList, Dimensions, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, Button, Dimensions, TouchableOpacity, Share} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { Video, ResizeMode } from 'expo-av';
-import Share from 'react-native-share';
+
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
@@ -26,10 +28,36 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.6)',
     },
   });
-export default function VideoItem({item, index}) {
+
+  const shareTheVideo = () => {
+    const linkToShare = 'https://www.diallapp.com/';
+ 
+    Share.share({
+      title: 'Share this Video!',
+      message: `I think you would love Diall. Here is an invite to get the app! Check out this link: ${linkToShare}`,
+      // url: linkToShare
+    });
+  };
+
+export default function VideoItem({videoData, index, isActive}) {
     const videoRef = React.useRef(null);
-    const [isPaused, setIsPaused] = React.useState(false);
-  
+    const [isPaused, setIsPaused] = React.useState(!isActive);
+    
+    React.useEffect(() => {
+        async function controlVideoPlayback() {
+          if (videoRef.current) {
+            if (isActive) {
+              await videoRef.current.playAsync();
+              setIsPaused(false);
+            } else {
+              await videoRef.current.pauseAsync();
+              setIsPaused(true);
+            }
+          }
+        }
+        controlVideoPlayback();
+      }, [isActive]);
+
     const handleVideoPress = async () => {
         if (videoRef.current) {
             if (isPaused) {
@@ -41,21 +69,35 @@ export default function VideoItem({item, index}) {
         }
     };
     return (
-        <View style={[{ flex: 1, height: Dimensions.get('window').height - 170 }, index % 2 == 0 ? { backgroundColor: 'yellow' } : { backgroundColor: 'pink' }]}>
+        <View style={[{ flex: 1, height: Dimensions.get('window').height - 170, backgroundColor: 'rgba(52, 52, 52, 0.8)'}]}>
             <TouchableOpacity onPress={handleVideoPress} style={{ flex: 1 }}>
                 <Video
                     ref={videoRef}
                     style={styles.video}
-                    source={{ uri: item }}
+                    source={{ uri: videoData.url }}
                     useNativeControls={isPaused}
                     resizeMode={ResizeMode.CONTAIN}
-                    shouldPlay
+                    shouldPlay={isActive}
                     isLooping
                 />
-                {/* VideoInfo */ }
+                <View style={{ position: 'absolute', bottom: 10, left: 10 }}>
+                    <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>{videoData.username}</Text>
+                    <Text style={{ color: 'white', fontSize: 14 }}>{videoData.title}</Text>
+                </View>
+                {/* <Button
+                    title="Share"
+                    style={{ position: 'absolute', top: 10, right: 10, backgroundColor: 'white' }}
+                    onPress={shareTheVideo}
+                /> */}
+                <TouchableOpacity
+                    style={{ position: 'absolute', bottom: 10, right: 15, zIndex: 2, backgroundColor: 'red', padding: 10  }}
+                    onPress={shareTheVideo}
+                >
+                    <Text style={{color:'white'}}> Share </Text>
+                </TouchableOpacity>
                 {isPaused && (
                     <View style={styles.pausedOverlay}>
-                        {/* <Text> </Text>  Replace with a paused icon */}
+                        <Ionicons name="pause-outline" size={30} color="white"/>
                     </View>
                 )}
             </TouchableOpacity>
