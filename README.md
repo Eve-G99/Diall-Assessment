@@ -30,9 +30,11 @@ Additional user-friendly design enhancements and feature extensions have been im
    git clone <repository-link>
    
 2. Navigate to the project directory and install the required packages:
-    cd Frontend
-    npm install
+   ```bash
+   cd Frontend
+   npm install
 
 3. To run the app on a simulator, ensure you have Xcode installed and then:
-    npm start
+   ```bash
+   npm start
 
