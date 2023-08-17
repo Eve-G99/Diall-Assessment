@@ -14,12 +14,25 @@ Additional user-friendly design enhancements and feature extensions have been im
 ## Tech Stack
 
 - **Frontend**: React Native
-- **Backend**: Node.js
-- **Database**: Firebase Cloud Firestore
+- **Backend**: Firebase Cloud Function with Node.js
+- **Database and Storage**: Firebase Cloud Firestore and Firebase Storage https://console.firebase.google.com/u/0/project/diall-assessment-66398/overview
 
 ## Development Environment
 
 - The app is built using the Expo-managed workflow and tailored for iOS.
 - **Codebase Inspection**: Visual Studio Code is recommended.
 - **Simulator Testing**: It's advisable to use Xcode for checking the app's behavior on the iPhone Simulator. Due to the time constraints, testing hasn't been performed on all device models. The recommended simulator version is iPhone 14.
+
+## Getting Started
+
+1. Clone the repository: 
+   ```bash
+   git clone <repository-link>
+   
+2. Navigate to the project directory and install the required packages:
+    cd Frontend
+    npm install
+
+3. To run the app on a simulator, ensure you have Xcode installed and then:
+    npm start
 
