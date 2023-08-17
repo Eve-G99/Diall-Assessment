@@ -7,13 +7,50 @@ import axios from 'axios'
 import SelectDropdown from 'react-native-select-dropdown'
 
 const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    margin: 12,
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 15,
+  },
+  searchBarContainer: {
+    flexDirection: 'row',
+    borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 5,
+    padding: 4,
+    alignItems: 'center',
+  },
+  dropdown: {
+    flex: 0.2,
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+  },
+  clearButton: {
     padding: 10,
   },
+  prompt: {
+    textAlign: 'center',
+    color: 'gray',
+    marginTop: '10%',
+    fontWeight:'bold',
+    padding: 20,
+
+  },
+  resultItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  resultImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginRight: 10,
+  },
 });
+
 
 const type = ["Name", "Key Words"]
 
@@ -53,13 +90,14 @@ export default function SearchPage({navigation}){
         url = `https://us-central1-diall-assessment-66398.cloudfunctions.net/getTherapistByKeywords?keywords=${input}`;
       } else {
         console.log("No type selected or unknown type.");
-        return;  // Exit the function if no type is selected or if the type is unknown
+        return;
       }
 
       axios.get(url)
       .then(function (response) {
         console.log(response.data);
         setResult(response.data)
+        // setLoadingIcon(null)
       })
       .catch(function (error) {
         // handle error
@@ -68,11 +106,25 @@ export default function SearchPage({navigation}){
       .finally(function () {
         // always executed
       });
-
     }
 
     return(
-      <View style={{ flex: 1, alighItems:'center', justifyContent:'flex-start'}}>
+      <View style={styles.container}>
+        <View style={styles.searchBarContainer}>
+          <SelectDropdown
+            style={styles.dropdown}
+            data={type}
+            defaultValue={"Name"}
+            onSelect={(selectedItem, index) => {
+              setSelectedType(selectedItem);
+            }}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              return selectedItem;
+            }}
+            rowTextForSelection={(item, index) => {
+              return item;
+            }}
+          />
           <TextInput
             style={styles.input}
             onChangeText={onChangeText}
@@ -80,78 +132,64 @@ export default function SearchPage({navigation}){
             placeholder="Search for therapist..."
             autoFocus
           />
-          <Button
-            icon={
-              <Icon name="search" size={15} color="white"/>
-            }
-            onPress={onSearchPress}
+          <Icon
+            name="times"
+            size={20}
+            onPress={onClearPress}
+            style={styles.clearButton}
           />
-          {(result.length != 0) && (
-            <FlatList
-              data={ result }
-              renderItem={({ item }) => (
-                <View style={{alignItems: 'center', marginVertical: 10}}>
-                  <Image 
-                    // source={{uri: item.profilepic}}
-                    source={{
-                      uri: 'https://ffd77b26c868a8a2ac4159dbec1fe8e47bd51fc66d0427839f5999f-apidata.googleusercontent.com/download/storage/v1/b/diall-assessment/o/UserPic%2Fkarsten-winegeart-Qb7D1xw28Co-unsplash.jpg?jk=ATmLuOFNuzT0oDTJWqVUjxb2DlHz8-dKEqFAm1j83_gSmgItg2Mq4iZNWMbBLxgE-OXa7Hmg5yR1kzXoIFvQHmHmn4QLQPGak5bMocwKCWM-8WS9EX2LLQvRYXn08ZpHJnk3SuSfs2XAJC-14YvyRzZBm9mzkGF1j_aaS2kqerbHb0tIOwtEwQSZ-843tPsg1PI7M9TEUnGRfETlcSwD4sq0bn1AJ7_BMZR5ks6xBjPTZljm_c4hs84tRDkwNTzCl0BMFCSdOhDAEc0b-zhkvJv6LubDWQeJj4WUse5zql1JV0sXzu5pwVjKfBiz0DyTWXAvsE5rT3lM3FNSxgxdtZbQfrn5fLoOlaTKMMViXDGOaPTUcYace5JVzbqnAZyVZ98LwgILui2AUpEr_hp6yiTicORefznOH1OnZYJcPXFxOcLXxlEtASfvzOuD993cxooTUaGaRxchUFhULvN1vTwp9DbfnNyiSmgSFLjU1xP7QTp5bC7dMYJrNEW0Fu9yg5FYRtayKP7hI1Govg_V7vDsc4EWwp2xhXLkGNc24fyuQH0WPfD7OAQKTbf7HmvvIYEP_VYHbXrgjLWpibIH-zPbwfbtw-34mYfoMbH19OyAsAqF0WnALO49GiSVoN4Gl3tF3mnnIzyBOzO58ACk9TAjRU5oRXjNkoZmUN8tDDYusVZvCbnly7Me07Z88Q6vwN-_8EtY57nvfrmme7QVX1KxlIZ4lPM_U9-EXsWmxz_A9_0kC7bZk_dwpCu1M1B1-7jUq4Sf-L-AGFhBACVigib7uwxPqiGfVe5EvWBop15URp7qVLlv-GSdO6dS9B_qg5rYC8Avl2yI4bw0ULKKZ8N3I2BJ_Wrw_O76DWdxIk7w1ZdGpCdbQEz7s-ldO1JYZX-bjbrkqjT0B06aDgIjip6lRRgWHofJRF7KnP_UtHmQOVaNwqlqyjX0wLMQdfQpalvJYgeb-prsZW7Czqo_S_BUaoHYqdl4oZT-KESH1EE0Zp_v4FDfIzYMfr1s-x8AuY-bTP1u4zPLG3rd7iHdCfgukL-D7MNV3m8RtHf_pgHqUh-EfvgpH9F9u4AvnLkdWuDbee2ZjgOtosZs3KI9WDeprohC-IvfRzX3GW_Ztk8lXYL72HxTqJZsQPBb3xPuuSkFWcSwHdCacd5iz18Xjv3s8sqhTLoeh8VeFkYpppaXtj0_4WuFrisPWhRs-iF9RqWeat8xO-Rk2g2D3btFPzib_dN8ejcrntRyGC23v3-rj7KdiNRHjw&isca=1',
-                    }}
-                    style={{width: 100, height: 100, borderRadius: 50}}
-                    resizeMode="cover"
-                  />
-                  <Text>{item.username}</Text>
-                  <Text style={{ fontStyle: 'italic' }}>{item.specialties}</Text>
-                  <Button
-                    title="Ask"
-                    buttonStyle={{ backgroundColor: 'green', width: 50, height: 50 }}
-                    titleStyle={{ fontSize: 12 }}
-                    onPress={() => {
-                    }}
-                  />
-                </View>
-              )}
-              keyExtractor={(item, index) => index.toString()}
-          />
-            )}
-          {((isSearched) && result.length == 0) && (
-            <>
-              <Text>Don't see your therapist?</Text>
-              <Button
-                title="Invite your therapist"
-                buttonStyle={{ backgroundColor: 'green', marginTop: 10 }}
-                onPress={inviteTherapist}
-              />
-            </>
-          )}       
-          {/* <SearchBar
-            placeholder="Search Here..."
-            lightTheme
-            round
-            value={input}
-            onChangeText={(text) => onChangeText(text)}
-            autoFocus
-            onSubmitEditing={()=>console.log(`User typed ${keywords}`)}
-          /> */}
-
-          <SelectDropdown
-            data={type}
-            defaultValue={"Name"}
-            onSelect={(selectedItem, index) => {
-              console.log(selectedItem, index)
-              setSelectedType(selectedItem);
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem
-            }}
-            rowTextForSelection={(item, index) => {
-              return item
-            }}
-          />
+        </View>
+        {!isSearched && (
+          <>
+            <Text style={styles.prompt}>Type in the search bar to find a therapist that's right for you</Text>
             <Button
-              title="Clear"
-              onPress={onClearPress}
+              icon={<Icon name="search" size={15} color="white"/>}
+              onPress={onSearchPress}
             />
-          {/* List display result one by one*/}
+          </>
+        )}
+
+        {(result.length !== 0) && (
+          <FlatList
+            data={result}
+            renderItem={({ item }) => (
+              <View style={styles.resultItem}>
+                <Image
+                  source={{uri:item.profilepic }}
+                  style={styles.resultImage}
+                  resizeMode="cover"
+                />
+                <View style={{ flex: 2, paddingLeft: 10, paddingTop: 15 }}>
+                  <Text style={{ fontWeight:'bold'}}>{item.username}</Text>
+                  <View style={{flexGrow: 1, flexDirection: 'row'}}>
+                    <Text style={{ fontSize: 14, fontStyle: 'italic', marginRight: 10, flex: 1, width: 1}}>
+                      {item.specialties.join(",     ")}
+                    </Text>
+                  </View>
+                </View>
+                <Button
+                  title="Ask"
+                  buttonStyle={{ backgroundColor: 'seagreen', width: 60, height: 40}}
+                  titleStyle={{ fontSize: 14, fontWeight:'bold' }}
+                  onPress={() => navigation.navigate('Ask')}
+                />
+              </View>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        )}
+
+        {((isSearched) && result.length == 0) && (
+          <>
+            <Text style={styles.prompt}>Don't see your therapist?</Text>
+            <Button
+              title="Invite your therapist"
+              buttonStyle={{ backgroundColor: 'green', marginTop: 10 }}
+              titleStyle={{ fontSize: 14, fontWeight:'bold' }}
+              onPress={inviteTherapist}
+            />
+          </>
+        )}
       </View>
-    )
-}
+    )}
+

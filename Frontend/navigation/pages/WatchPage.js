@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, Share, Button} from 'react-native';
 import VideoItem from './VideoItem'
 
-export default function WatchPage({ navigation }) {
+export default function WatchPage({ route, navigation }) {
     const videoData = [
         {
             url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',

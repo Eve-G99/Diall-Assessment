@@ -60,8 +60,8 @@ import {firebase} from './firebase'
     };
   
     const onSendPress = async () => {
-      const filename = `testUser-${Date.now()}.mov`; // Change the extension if it's not a .mov file
-      const storageRef = firebase.storage().ref().child(filename);
+      const filename = `testUser-${title}-${Date.now()}.mov`; // Change the extension if it's not a .mov file
+      const storageRef = firebase.storage().ref().child((`UserVideo/${filename}`));
     
       // Convert the file into a blob
       const response = await fetch(videoURI);
@@ -82,8 +82,15 @@ import {firebase} from './firebase'
             // Send finished.
             // Navigate + play with the return url
             console.log(url)
-            resolve(url);
-          }
+            resolve(url)
+            navigation.navigate('Watch', 
+              {
+                url: url,
+                username: 'testUser',
+                title: title,
+              }
+            )
+          },
         );
       });   
     }
